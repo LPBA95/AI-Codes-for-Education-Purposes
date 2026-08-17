@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio de robótica — reglas y limpieza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16212B;
+  --ink-soft:#5A6874;
+  --page:#E9EDF1;
+  --tray:#FFFFFF;
+  --rule:#D3DAE1;
+  --hub:#0B5D6B;
+  --mot:#5B3A9B;
+  --cab:#B01B57;
+  --bui:#2C6E31;
+  --cle:#9A5B00;
+  --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Courier New",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.6;
+  background-image:linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px);
+  background-size:44px 44px;background-position:-1px -1px;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 64px}
+
+header{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 6px}
+h1{font-family:var(--cond);font-weight:600;font-size:clamp(28px,5vw,42px);line-height:1.05;margin:0;letter-spacing:-.01em}
+h1 .sub{display:block;font-family:var(--sans);font-weight:400;font-size:15px;color:var(--ink-soft);letter-spacing:0;margin-top:8px;max-width:46ch;line-height:1.5}
+
+.lang{display:flex;border:1.5px solid var(--ink);background:var(--tray)}
+.lang button{
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;padding:9px 16px;
+  background:none;border:0;cursor:pointer;color:var(--ink);
+}
+.lang button+button{border-left:1.5px solid var(--ink)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
+
+.tabs{display:flex;gap:0;margin:0 0 20px;border-bottom:1.5px solid var(--ink)}
+.tabs button{
+  font-family:var(--cond);font-weight:600;font-size:17px;padding:11px 20px;
+  background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-3px;
+  cursor:pointer;color:var(--ink-soft);
+}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+
+.panel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+
+.bin{background:var(--tray);border:1.5px solid var(--ink);display:flex;flex-direction:column}
+.bin-head{display:flex;align-items:baseline;gap:10px;padding:12px 16px;color:#fff}
+.bin-head .code{font-family:var(--mono);font-size:12px;opacity:.75;letter-spacing:.08em}
+.bin-head h2{font-family:var(--cond);font-weight:600;font-size:19px;margin:0;flex:1}
+.bin-head .n{font-family:var(--mono);font-size:12px;opacity:.75}
+.b-hub .bin-head{background:var(--hub)} .b-mot .bin-head{background:var(--mot)}
+.b-cab .bin-head{background:var(--cab)} .b-bui .bin-head{background:var(--bui)}
+
+details{border-top:1px solid var(--rule)}
+details:first-of-type{border-top:0}
+summary{
+  display:flex;gap:12px;align-items:flex-start;padding:13px 16px;cursor:pointer;
+  font-weight:500;list-style:none;
+}
+summary::-webkit-details-marker{display:none}
+summary:hover{background:#F2F5F8}
+summary:focus-visible{outline:3px solid var(--ink);outline-offset:-3px}
+.mark{
+  flex:none;width:20px;height:20px;margin-top:2px;border:1.5px solid currentColor;
+  position:relative;
+}
+.mark::before,.mark::after{content:"";position:absolute;background:currentColor;transition:transform .18s ease}
+.mark::before{left:4px;right:4px;top:8px;height:2px}
+.mark::after{top:4px;bottom:4px;left:8px;width:2px}
+details[open] .mark::after{transform:scaleY(0)}
+.b-hub .mark{color:var(--hub)} .b-mot .mark{color:var(--mot)}
+.b-cab .mark{color:var(--cab)} .b-bui .mark{color:var(--bui)}
+.why{padding:0 16px 15px 48px;margin:0;color:var(--ink-soft);font-size:15px}
+.why::before{content:"";display:block;width:28px;height:2px;background:var(--rule);margin:0 0 9px -32px}
+
+.clean{background:var(--tray);border:1.5px solid var(--ink);max-width:720px}
+.clean .bin-head{background:var(--cle)}
+.task{display:flex;gap:13px;align-items:flex-start;padding:13px 16px;border-top:1px solid var(--rule);cursor:pointer}
+.task:hover{background:#F2F5F8}
+.task input{
+  flex:none;width:22px;height:22px;margin:1px 0 0;accent-color:var(--cle);cursor:pointer;
+}
+.task .txt{font-weight:500}
+.task .note{display:block;font-weight:400;font-size:14px;color:var(--ink-soft);margin-top:2px}
+.task input:checked ~ .txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-thickness:1px}
+.task input:checked ~ .txt .note{text-decoration:none}
+.bar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1.5px solid var(--ink);background:#FBFCFD}
+.count{font-family:var(--mono);font-size:14px}
+.count.done{color:var(--bui);font-weight:500}
+.reset{font-family:var(--mono);font-size:13px;letter-spacing:.08em;padding:8px 15px;background:none;border:1.5px solid var(--ink);cursor:pointer;color:var(--ink)}
+.reset:hover{background:var(--ink);color:#fff}
+footer{margin-top:26px;font-size:14px;color:var(--ink-soft);max-width:60ch}
+
+@media print{
+  body{background:#fff;background-image:none}
+  .lang,.tabs,.reset{display:none}
+  .panel[hidden]{display:block!important;break-before:page}
+  .why{display:block!important}
+  .bin,.clean{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <p class="eyebrow" data-en="Robotics lab" data-es="Laboratorio de robótica">Laboratorio de robótica</p>
+    <h1><span data-en="Take care of the kit" data-es="Cuida el kit">Cuida el kit</span>
+      <span class="sub" data-en="Tap any rule to see why it matters. One kit per team, all year." data-es="Toca cada regla para ver por qué importa. Un kit por equipo, todo el año.">Toca cada regla para ver por qué importa. Un kit por equipo, todo el año.</span>
+    </h1>
+  </div>
+  <div class="lang" role="group" aria-label="Idioma / Language">
+    <button type="button" data-lang="es" aria-pressed="true">ES</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<div class="tabs" role="tablist">
+  <button type="button" role="tab" aria-selected="true" data-panel="rules" data-en="Lab rules" data-es="Reglas del laboratorio">Reglas del laboratorio</button>
+  <button type="button" role="tab" aria-selected="false" data-panel="clean" data-en="Cleanup routine" data-es="Rutina de limpieza">Rutina de limpieza</button>
+</div>
+
+<section class="panel" id="rules">
+<div class="grid">
+
+  <div class="bin b-hub">
+    <div class="bin-head"><span class="code">A</span><h2 data-en="The hub" data-es="El hub">El hub</h2><span class="n">4</span></div>
+    <details><summary><span class="mark"></span><span data-en="Drive on the floor or on a table with an edge" data-es="Maneja en el piso o en una mesa con borde">Maneja en el piso o en una mesa con borde</span></summary>
+      <p class="why" data-en="A fall from desk height is the most common way a hub cracks." data-es="Una caída desde la altura del pupitre es la forma más común de quebrar un hub.">Una caída desde la altura del pupitre es la forma más común de quebrar un hub.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Carry the robot with both hands under the base" data-es="Carga el robot con las dos manos por debajo de la base">Carga el robot con las dos manos por debajo de la base</span></summary>
+      <p class="why" data-en="Never by an arm, an attachment or a cable — they come off in your hand." data-es="Nunca por un brazo, un accesorio o un cable: se te quedan en la mano.">Nunca por un brazo, un accesorio o un cable: se te quedan en la mano.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Leave the ports and the power button uncovered" data-es="Deja libres los puertos y el botón de encendido">Deja libres los puertos y el botón de encendido</span></summary>
+      <p class="why" data-en="If your build blocks them, someone ends up forcing the cable in at an angle." data-es="Si tu construcción los tapa, alguien termina forzando el cable en ángulo.">Si tu construcción los tapa, alguien termina forzando el cable en ángulo.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Plug the USB in straight, take it out straight" data-es="Conecta y desconecta el USB derecho">Conecta y desconecta el USB derecho</span></summary>
+      <p class="why" data-en="A sideways tug is what breaks the port, and the port can't be replaced." data-es="Un jalón de lado es lo que rompe el puerto, y el puerto no se puede cambiar.">Un jalón de lado es lo que rompe el puerto, y el puerto no se puede cambiar.</p></details>
+  </div>
+
+  <div class="bin b-mot">
+    <div class="bin-head"><span class="code">B</span><h2 data-en="Motors and sensors" data-es="Motores y sensores">Motores y sensores</h2><span class="n">4</span></div>
+    <details><summary><span class="mark"></span><span data-en="Don't spin the motor shaft fast by hand" data-es="No gires rápido el eje del motor con la mano">No gires rápido el eje del motor con la mano</span></summary>
+      <p class="why" data-en="A spun motor pushes current back into the hub and wears the internal gears." data-es="Un motor girado a mano manda corriente de regreso al hub y desgasta los engranajes internos.">Un motor girado a mano manda corriente de regreso al hub y desgasta los engranajes internos.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Stop the robot before it hits something" data-es="Detén el robot antes de que choque">Detén el robot antes de que choque</span></summary>
+      <p class="why" data-en="A blocked motor keeps pushing, heats up and drains the battery." data-es="Un motor bloqueado sigue forzando, se calienta y gasta la batería.">Un motor bloqueado sigue forzando, se calienta y gasta la batería.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Keep fingers, hair and cables away from gears and wheels" data-es="Mantén dedos, cabello y cables lejos de engranajes y ruedas">Mantén dedos, cabello y cables lejos de engranajes y ruedas</span></summary>
+      <p class="why" data-en="Gear trains pinch hard and don't stop on their own. Tie long hair back before a test run." data-es="Los engranajes atrapan con fuerza y no se detienen solos. Recógete el cabello largo antes de una prueba.">Los engranajes atrapan con fuerza y no se detienen solos. Recógete el cabello largo antes de una prueba.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Don't touch the sensor lens" data-es="No toques el lente de los sensores">No toques el lente de los sensores</span></summary>
+      <p class="why" data-en="Fingerprints change the readings. Clean it only with a dry cloth, never with water." data-es="Las huellas alteran las lecturas. Límpialo solo con un paño seco, nunca con agua.">Las huellas alteran las lecturas. Límpialo solo con un paño seco, nunca con agua.</p></details>
+  </div>
+
+  <div class="bin b-cab">
+    <div class="bin-head"><span class="code">C</span><h2 data-en="Cables" data-es="Cables">Cables</h2><span class="n">3</span></div>
+    <details><summary><span class="mark"></span><span data-en="Unplug by holding the connector" data-es="Desconecta sujetando el conector">Desconecta sujetando el conector</span></summary>
+      <p class="why" data-en="Pulling the wire separates it inside, where you can't see the damage." data-es="Jalar el cable lo separa por dentro, donde no puedes ver el daño.">Jalar el cable lo separa por dentro, donde no puedes ver el daño.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Check no cable is pinched before closing the lid" data-es="Revisa que ningún cable quede prensado antes de cerrar la tapa">Revisa que ningún cable quede prensado antes de cerrar la tapa</span></summary>
+      <p class="why" data-en="A cable crushed under the lid fails weeks later, and nobody knows why." data-es="Un cable aplastado por la tapa falla semanas después y nadie sabe por qué.">Un cable aplastado por la tapa falla semanas después y nadie sabe por qué.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Store cables in loose coils" data-es="Guarda los cables en rollos flojos">Guarda los cables en rollos flojos</span></summary>
+      <p class="why" data-en="Wrapping them tight around your hand cracks the wire over the school year." data-es="Enrollarlos apretados en la mano quiebra el alambre a lo largo del año escolar.">Enrollarlos apretados en la mano quiebra el alambre a lo largo del año escolar.</p></details>
+  </div>
+
+  <div class="bin b-bui">
+    <div class="bin-head"><span class="code">D</span><h2 data-en="Building and taking apart" data-es="Armar y desarmar">Armar y desarmar</h2><span class="n">3</span></div>
+    <details><summary><span class="mark"></span><span data-en="Use the separator, not your teeth or nails" data-es="Usa el separador, no los dientes ni las uñas">Usa el separador, no los dientes ni las uñas</span></summary>
+      <p class="why" data-en="Teeth mark the pieces and nails break. The separator is in every box." data-es="Los dientes marcan las piezas y las uñas se quiebran. El separador viene en cada caja.">Los dientes marcan las piezas y las uñas se quiebran. El separador viene en cada caja.</p></details>
+    <details><summary><span class="mark"></span><span data-en="If a piece doesn't fit, it's the wrong piece" data-es="Si una pieza no entra, es la pieza equivocada">Si una pieza no entra, es la pieza equivocada</span></summary>
+      <p class="why" data-en="Forcing an axle deforms the hole and ruins both parts at once." data-es="Forzar un eje deforma el agujero y arruina las dos piezas a la vez.">Forzar un eje deforma el agujero y arruina las dos piezas a la vez.</p></details>
+    <details><summary><span class="mark"></span><span data-en="Build over the table, never over the floor" data-es="Arma sobre la mesa, nunca sobre el piso">Arma sobre la mesa, nunca sobre el piso</span></summary>
+      <p class="why" data-en="Pieces that reach the floor get stepped on, and a missing pin stops the next team." data-es="Las piezas que llegan al piso se pisan, y un pin que falta detiene al siguiente equipo.">Las piezas que llegan al piso se pisan, y un pin que falta detiene al siguiente equipo.</p></details>
+  </div>
+
+</div>
+</section>
+
+<section class="panel" id="clean" hidden>
+<div class="clean">
+  <div class="bin-head"><span class="code">E</span><h2 data-en="Before the bell — 2 minutes" data-es="Antes del timbre — 2 minutos">Antes del timbre — 2 minutos</h2><span class="n">8</span></div>
+
+  <label class="task"><input type="checkbox"><span class="txt" data-en="Robot taken apart, pieces in their own compartment" data-es="Robot desarmado, piezas en su propio compartimiento">Robot desarmado, piezas en su propio compartimiento</span></label>
+  <label class="task"><input type="checkbox"><span class="txt" data-en="3 motors and 3 sensors are in the box" data-es="Los 3 motores y los 3 sensores están en la caja">Los 3 motores y los 3 sensores están en la caja<span class="note" data-en="Count them out loud with your partner." data-es="Cuéntalos en voz alta con tu compañero.">Cuéntalos en voz alta con tu compañero.</span></span></label>
+  <label class="task"><input type="checkbox"><span class="txt" data-en="Cables unplugged by the connector and loosely coiled" data-es="Cables desconectados por el conector y enrollados flojos">Cables desconectados por el conector y enrollados flojos</span></label>
+  <label class="task"><input type="checkbox"><span class="txt" data-en="Hub turned off and left charging" data-es="Hub apagado y puesto a cargar">Hub apagado y puesto a cargar</span></label>
+  <label class="task"><input type="checkbox"><span class="txt" data-en="Nothing left on the floor or under the table" data-es="Nada quedó en el piso ni debajo de la mesa">Nada quedó en el piso ni debajo de la mesa</span></label>
+  <label class="task"><input type="checkbox"><span class="txt" data-en="Lid closed with no cable pinched" data-es="Tapa cerrada sin ningún cable prensado">Tapa cerrada sin ningún cable prensado</span></label>
+  <label class="task"><input type="checkbox"><span class="txt" data-en="Box back on your team's shelf" data-es="Caja de vuelta en el estante de tu equipo">Caja de vuelta en el estante de tu equipo</span></label>
+  <label class="task"><input type="checkbox"><span class="txt" data-en="Anything broken or missing reported to the teacher" data-es="Reportaste al docente lo roto o lo que falta">Reportaste al docente lo roto o lo que falta<span class="note" data-en="Reporting isn't a punishment. Saying it today is easier than hunting for it tomorrow." data-es="Reportar no es castigo. Decirlo hoy es más fácil que buscarlo mañana.">Reportar no es castigo. Decirlo hoy es más fácil que buscarlo mañana.</span></span></label>
+
+  <div class="bar">
+    <span class="count" id="count">0 de 8 listos</span>
+    <button type="button" class="reset" id="reset" data-en="Reset for next class" data-es="Reiniciar para la siguiente clase">Reiniciar para la siguiente clase</button>
+  </div>
+</div>
+</section>
+
+<footer data-en="Kits are shared. The team that closes the box well is the reason the next team can build." data-es="Los kits son compartidos. El equipo que cierra bien la caja es la razón por la que el siguiente equipo puede armar.">Los kits son compartidos. El equipo que cierra bien la caja es la razón por la que el siguiente equipo puede armar.</footer>
+
+</div>
+
+<script>
+var lang = "es";
+var boxes = Array.prototype.slice.call(document.querySelectorAll(".task input"));
+var count = document.getElementById("count");
+
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-" + lang + "]").forEach(function(el){
+    var note = el.querySelector(".note");
+    el.childNodes[0].nodeValue = el.getAttribute("data-" + lang);
+    if (note) el.appendChild(note);
+  });
+  document.querySelectorAll(".lang button").forEach(function(b){
+    b.setAttribute("aria-pressed", b.dataset.lang === lang);
+  });
+  document.title = lang === "es"
+    ? "Laboratorio de robótica — reglas y limpieza"
+    : "Robotics lab — rules and cleanup";
+  updateCount();
+}
+
+document.querySelectorAll(".lang button").forEach(function(b){
+  b.addEventListener("click", function(){ lang = b.dataset.lang; applyLang(); });
+});
+
+document.querySelectorAll(".tabs button").forEach(function(t){
+  t.addEventListener("click", function(){
+    document.querySelectorAll(".tabs button").forEach(function(o){
+      o.setAttribute("aria-selected", o === t);
+    });
+    document.querySelectorAll(".panel").forEach(function(p){
+      p.hidden = p.id !== t.dataset.panel;
+    });
+  });
+});
+
+function updateCount(){
+  var done = boxes.filter(function(b){ return b.checked; }).length;
+  var all = done === boxes.length;
+  if (lang === "es"){
+    count.textContent = all ? "Kit listo para guardar" : done + " de " + boxes.length + " listos";
+  } else {
+    count.textContent = all ? "Kit ready to store" : done + " of " + boxes.length + " done";
+  }
+  count.classList.toggle("done", all);
+}
+
+boxes.forEach(function(b){ b.addEventListener("change", updateCount); });
+document.getElementById("reset").addEventListener("click", function(){
+  boxes.forEach(function(b){ b.checked = false; });
+  updateCount();
+});
+
+applyLang();
+</script>
+</body>
+</html>
